@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pseudocode to C Compiler - Modern Online IDE</title>
+    <meta name="description" content="A powerful, flexible, and accurate Pseudocode to C Compiler with intelligent type inference, multi-syntax support, and instant code generation.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <header class="navbar" id="topNavbar">
+        <div class="nav-left">
+            <div class="brand-logo">
+                <span class="logo-icon">⚡</span>
+                <div class="brand-info">
+                    <span class="brand-name">Pseudo<span class="highlight">2C</span></span>
+                    <span class="brand-badge">Compiler v2.0</span>
+                </div>
+            </div>
+            <nav class="nav-links">
+                <button class="nav-link active" id="navHomeBtn">Home</button>
+                <button class="nav-link" id="navExamplesBtn">Examples <span class="badge">20</span></button>
+                <button class="nav-link" id="navDocsBtn">Documentation</button>
+            </nav>
+        </div>
+
+        <div class="nav-right">
+            <div class="status-indicator ready" id="statusIndicator">
+                <span class="status-dot"></span>
+                <span class="status-text" id="statusText">Ready</span>
+            </div>
+            <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Light / Dark Mode" aria-label="Toggle Theme">
+                <span class="theme-icon" id="themeIcon">☀️</span>
+                <span class="theme-label" id="themeLabel">Light Mode</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="workspace-container">
+        <!-- LEFT PANEL: Pseudocode Editor -->
+        <section class="editor-panel left-panel">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <span class="title-icon">📝</span>
+                    <h2>Pseudocode Input</h2>
+                </div>
+                <div class="panel-actions">
+                    <button class="btn btn-secondary btn-sm" id="loadExampleQuickBtn" title="Select an example">
+                        <span>📚 Examples</span>
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="pasteCodeBtn" title="Paste from clipboard">
+                        <span>📋 Paste</span>
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="clearCodeBtn" title="Clear input text">
+                        <span>🗑️ Clear</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="editor-wrapper" id="pseudocodeEditorWrapper">
+                <div class="line-numbers" id="inputLineNumbers" aria-hidden="true">1</div>
+                <textarea 
+                    id="pseudocodeInput" 
+                    class="code-textarea" 
+                    placeholder="// Enter your pseudocode here or load an example from above...&#10;START&#10;    DECLARE name: STRING&#10;    name = &quot;World&quot;&#10;    PRINT &quot;Hello, &quot;, name&#10;END"
+                    spellcheck="false"
+                    autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="off"
+                ></textarea>
+            </div>
+
+            <div class="panel-footer">
+                <div class="editor-stats">
+                    <span id="charCount">0 characters</span>
+                    <span class="stat-separator">•</span>
+                    <span id="lineCount">1 line</span>
+                </div>
+                <button class="btn btn-primary btn-convert" id="convertBtn">
+                    <span class="btn-icon">⚡</span>
+                    <span class="btn-text">Convert to C</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- RIGHT PANEL: Output & Tabs -->
+        <section class="editor-panel right-panel">
+            <div class="panel-header tab-header">
+                <div class="tab-list" role="tablist">
+                    <button class="tab-btn active" role="tab" data-tab="tabGeneratedCode" id="tabBtnCode">
+                        <span class="tab-icon">💻</span> C Code
+                    </button>
+                    <button class="tab-btn" role="tab" data-tab="tabExplanation" id="tabBtnExplanation">
+                        <span class="tab-icon">💡</span> Explanation
+                    </button>
+                    <button class="tab-btn" role="tab" data-tab="tabDiagnostics" id="tabBtnDiagnostics">
+                        <span class="tab-icon">⚠️</span> Diagnostics <span class="tab-badge" id="diagBadge" style="display:none;">0</span>
+                    </button>
+                    <button class="tab-btn" role="tab" data-tab="tabSymbols" id="tabBtnSymbols">
+                        <span class="tab-icon">🔍</span> Symbols & AST
+                    </button>
+                    <button class="tab-btn" role="tab" data-tab="tabExecution" id="tabBtnExecution">
+                        <span class="tab-icon">⚙️</span> Run & Build
+                    </button>
+                </div>
+                <div class="panel-actions">
+                    <button class="btn btn-secondary btn-sm" id="copyCodeBtn" title="Copy C code to clipboard">
+                        <span id="copyIcon">📋</span> <span id="copyText">Copy</span>
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="downloadCodeBtn" title="Download as .c source file">
+                        <span>⬇️ Download .c</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab 1: Generated C Code -->
+            <div class="tab-content active" id="tabGeneratedCode">
+                <div class="editor-wrapper output-wrapper">
+                    <div class="line-numbers output-line-numbers" id="outputLineNumbers" aria-hidden="true">1</div>
+                    <pre class="code-output"><code id="cCodeDisplay">// Generated C code will appear here after conversion.
+// Click 'Convert to C' or select an example above.</code></pre>
+                </div>
+            </div>
+
+            <!-- Tab 2: Conversion Explanation -->
+            <div class="tab-content" id="tabExplanation">
+                <div class="explanation-container" id="explanationContent">
+                    <div class="empty-state">
+                        <span class="empty-icon">💡</span>
+                        <h3>No Conversion Yet</h3>
+                        <p>Convert pseudocode to see a detailed step-by-step breakdown of type inference, headers, and control structures.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Diagnostics & Errors -->
+            <div class="tab-content" id="tabDiagnostics">
+                <div class="diagnostics-container" id="diagnosticsContent">
+                    <div class="empty-state">
+                        <span class="empty-icon">✓</span>
+                        <h3>No Errors</h3>
+                        <p>Compiler diagnostics, syntax warnings, and error hints will be reported here.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Symbol Table & AST -->
+            <div class="tab-content" id="tabSymbols">
+                <div class="symbols-container" id="symbolsContent">
+                    <div class="empty-state">
+                        <span class="empty-icon">🔍</span>
+                        <h3>Symbol Table</h3>
+                        <p>Variable declarations, types, inference status, and scopes will appear here.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 5: Execution / Build -->
+            <div class="tab-content" id="tabExecution">
+                <div class="execution-container">
+                    <div class="exec-header">
+                        <div class="exec-info">
+                            <h3>C Compiler & Execution Environment</h3>
+                            <p>Verify validity of generated C code with GCC / Clang.</p>
+                        </div>
+                        <button class="btn btn-primary btn-sm" id="runGccBtn">
+                            <span>🚀 Compile with GCC</span>
+                        </button>
+                    </div>
+                    <div class="exec-console" id="execConsole">
+                        <div class="console-line info-line">[System] Ready to test generated C code.</div>
+                        <div class="console-line note-line">[Note] If GCC is installed on your computer, you can run the code directly. Otherwise, download the .c file and compile with your preferred C IDE.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-footer output-footer">
+                <div class="status-summary" id="outputSummary">
+                    <span>Generated Standard C99 Code</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Examples Modal -->
+    <div class="modal-overlay" id="examplesModal" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span class="modal-icon">📚</span>
+                    <h3>Ready-to-Use Example Programs</h3>
+                </div>
+                <button class="modal-close-btn" id="closeExamplesModalBtn" aria-label="Close modal">×</button>
+            </div>
+            <div class="modal-categories" id="exampleCategoryFilters">
+                <button class="category-btn active" data-category="All">All (20)</button>
+                <button class="category-btn" data-category="Basics">Basics</button>
+                <button class="category-btn" data-category="Data Types">Data Types</button>
+                <button class="category-btn" data-category="Conditionals">Conditionals</button>
+                <button class="category-btn" data-category="Loops">Loops</button>
+                <button class="category-btn" data-category="Arrays">Arrays</button>
+                <button class="category-btn" data-category="Functions">Functions</button>
+                <button class="category-btn" data-category="Algorithms">Algorithms</button>
+            </div>
+            <div class="examples-grid" id="examplesGrid">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Documentation & Help Modal -->
+    <div class="modal-overlay" id="docsModal" aria-hidden="true">
+        <div class="modal-card docs-card">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span class="modal-icon">📖</span>
+                    <h3>Pseudocode Syntax Guide & Documentation</h3>
+                </div>
+                <button class="modal-close-btn" id="closeDocsModalBtn" aria-label="Close modal">×</button>
+            </div>
+            <div class="docs-content">
+                <section class="docs-section">
+                    <h4>Supported Data Types</h4>
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th>Pseudocode Type</th>
+                                <th>Generated C Type</th>
+                                <th>Input Specifier</th>
+                                <th>Output Specifier</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>INTEGER / INT</td><td><code>int</code></td><td><code>%d</code></td><td><code>%d</code></td></tr>
+                            <tr><td>FLOAT</td><td><code>float</code></td><td><code>%f</code></td><td><code>%f</code></td></tr>
+                            <tr><td>REAL / DOUBLE</td><td><code>double</code></td><td><code>%lf</code></td><td><code>%lf</code></td></tr>
+                            <tr><td>CHARACTER / CHAR</td><td><code>char</code></td><td><code>%c</code></td><td><code>%c</code></td></tr>
+                            <tr><td>STRING</td><td><code>char[100]</code></td><td><code>%99s</code></td><td><code>%s</code></td></tr>
+                            <tr><td>BOOLEAN / BOOL</td><td><code>bool</code> (&lt;stdbool.h&gt;)</td><td><code>%d</code> (via helper)</td><td><code>%s</code> (true/false)</td></tr>
+                            <tr><td>LONG</td><td><code>long</code></td><td><code>%ld</code></td><td><code>%ld</code></td></tr>
+                            <tr><td>SHORT</td><td><code>short</code></td><td><code>%hd</code></td><td><code>%hd</code></td></tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="docs-section">
+                    <h4>Supported Syntax Variations</h4>
+                    <div class="syntax-grid">
+                        <div class="syntax-card">
+                            <h5>Variable Declarations</h5>
+                            <code>DECLARE x: INTEGER</code><br>
+                            <code>DECLARE price: FLOAT = 9.99</code><br>
+                            <code>DECLARE numbers[5]: INTEGER</code><br>
+                            <code>INTEGER a, b, c</code>
+                        </div>
+                        <div class="syntax-card">
+                            <h5>Assignments</h5>
+                            <code>x = 10</code><br>
+                            <code>SET x TO 10</code><br>
+                            <code>LET x = 10</code><br>
+                            <code>numbers[0] = 50</code>
+                        </div>
+                        <div class="syntax-card">
+                            <h5>Input & Output</h5>
+                            <code>INPUT x</code> / <code>READ x, y</code> / <code>GET x</code><br>
+                            <code>OUTPUT x</code> / <code>PRINT "Sum: ", sum</code><br>
+                            <code>DISPLAY x</code> / <code>WRITE x</code>
+                        </div>
+                        <div class="syntax-card">
+                            <h5>Conditionals</h5>
+                            <code>IF x &gt; 10 THEN ... END IF</code><br>
+                            <code>IF (x &gt;= 10) ... ELSE ... ENDIF</code><br>
+                            <code>ELSE IF condition THEN</code>
+                        </div>
+                        <div class="syntax-card">
+                            <h5>Loops</h5>
+                            <code>FOR i = 1 TO 10 ... NEXT i</code><br>
+                            <code>FOR i FROM 1 TO 10 ... END FOR</code><br>
+                            <code>WHILE x &gt; 0 DO ... END WHILE</code><br>
+                            <code>REPEAT ... UNTIL x &lt;= 0</code>
+                        </div>
+                        <div class="syntax-card">
+                            <h5>Functions & Procedures</h5>
+                            <code>FUNCTION add(a: INT, b: INT): INT</code><br>
+                            <code>    RETURN a + b</code><br>
+                            <code>END FUNCTION</code><br>
+                            <code>PROCEDURE greet() ... END PROCEDURE</code>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="docs-section">
+                    <h4>Automatic Type Inference Rules</h4>
+                    <ul>
+                        <li><strong>Explicit declarations always take priority.</strong> The compiler never silently overrides a declared type.</li>
+                        <li><strong>Whole numbers:</strong> Inferred as <code>int</code> (e.g. <code>x = 10</code>).</li>
+                        <li><strong>Decimal numbers:</strong> Inferred as <code>float</code> / <code>double</code> (e.g. <code>price = 25.75</code>).</li>
+                        <li><strong>Single characters:</strong> Inferred as <code>char</code> (e.g. <code>grade = 'A'</code>).</li>
+                        <li><strong>Double-quoted text:</strong> Inferred as <code>string</code> (e.g. <code>name = "Prachi"</code>).</li>
+                        <li><strong>Booleans:</strong> Inferred as <code>bool</code> (e.g. <code>isPassed = true</code>).</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
